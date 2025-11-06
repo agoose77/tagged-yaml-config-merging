@@ -1,0 +1,9 @@
+foo:
+  bar:
+    - this
+    - that
+
+hello:
+  world:
+    - yes
+    - no

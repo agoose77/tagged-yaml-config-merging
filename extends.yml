@@ -1,0 +1,9 @@
+foo:
+  bar: !extends
+    - this-derived
+    - that-derived
+
+hello:
+  world:
+    - linux
+    - server
