@@ -20,3 +20,9 @@ parent-list-b:
 parent-list-c:
   - 1
   - 2
+
+parent-joinable:
+  - id: foo
+    a: 1
+  - id: bar
+    b: 2

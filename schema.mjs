@@ -30,6 +30,36 @@ const ExtendsYamlType = new yaml.Type("!extends", {
   },
 });
 
+class JoiningArray {
+  klass = "JoiningArray";
+
+  constructor(data) {
+    this.data = data;
+  }
+
+  erase() {
+    return this.data;
+  }
+}
+
+const JoinsYamlType = new yaml.Type("!joins", {
+  kind: "sequence",
+
+  resolve: function (data) {
+    return true;
+  },
+
+  construct: function (data) {
+    return new JoiningArray(data);
+  },
+
+  instanceOf: JoiningArray,
+
+  represent: function (obj) {
+    return obj.erase();
+  },
+});
+
 class ReplacingMap {
   klass = "ReplacingMap";
 
@@ -60,5 +90,9 @@ const ReplacesYamlType = new yaml.Type("!replaces", {
   },
 });
 
-const SCHEMA = yaml.DEFAULT_SCHEMA.extend([ExtendsYamlType, ReplacesYamlType]);
+const SCHEMA = yaml.DEFAULT_SCHEMA.extend([
+  ExtendsYamlType,
+  JoinsYamlType,
+  ReplacesYamlType,
+]);
 export { SCHEMA };

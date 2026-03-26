@@ -21,3 +21,7 @@ parent-list-c:
   d: 10
   e: 20
 child-scalar-a: "scalar"
+
+parent-joinable: !joins
+  - id: foo
+    b: 10

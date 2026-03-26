@@ -14,16 +14,28 @@ export function parseYaml(content) {
 
   // After potentially more merges, realise the config
   traverse(config).forEach(function (item) {
-    if (item.klass === "ExtendingArray") {
-      // Store record of extends
-      strategyRef.set(this.path, "extends");
-      // Erase custom type
-      this.update(item.erase());
-    } else if (item.klass === "ReplacingMap") {
-      // Store record of extends
-      strategyRef.set(this.path, "replaces");
-      // Erase custom type
-      this.update(item.erase());
+    switch (item.klass) {
+      case "JoiningArray": {
+        // Store record of extends
+        strategyRef.set(this.path, "joins");
+        // Erase custom type
+        this.update(item.erase());
+        break;
+      }
+
+      case "ExtendingArray": {
+        // Store record of extends
+        strategyRef.set(this.path, "extends");
+        // Erase custom type
+        this.update(item.erase());
+        break;
+      }
+      case "ReplacingMap": {
+        // Store record of extends
+        strategyRef.set(this.path, "replaces");
+        // Erase custom type
+        this.update(item.erase());
+      }
     }
   });
 
@@ -55,6 +67,26 @@ export function extend(parent, child, strategy) {
         // Extend parent array (or set if undefined)
         // TODO: throw if not array on LHS?
         setParentItemAndExit([...parentItem, ...item]);
+      } else if (itemStrategy === "joins") {
+        if (
+          Array.isArray(parentItem) &&
+          parentItem.every((p) => isMap(p)) &&
+          item.every((p) => isMap(p))
+        ) {
+          for (const newMember of item) {
+            const id = item.id;
+            if (id === undefined) {
+              continue;
+            }
+            const joinMember = parentItem.find((p) => p.id === id);
+            if (joinMember === undefined) {
+              continue;
+            }
+            Object.assign(joinMember, newMember);
+          }
+        } else {
+          setParentItemAndExit(parentItem);
+        }
       }
       // Array? - Array (replace)
       else {
