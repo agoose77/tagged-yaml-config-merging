@@ -47,70 +47,83 @@ function isMap(object) {
 }
 
 export function extend(parent, child, strategy) {
-  const parentRef = traverse(parent);
-  const strategyRef = traverse(strategy);
-
-  traverse(child).forEach(function (item) {
-    const parentItem = parentRef.get(this.path);
-    const setParentItemAndExit = (value) => {
-      // Set value
-      parentRef.set(this.path, value);
-      // Stop traversing
-      this.update(item, true);
-    };
-
-    if (Array.isArray(item)) {
-      const itemStrategy = strategyRef.get(this.path);
-
-      // Array? - Array (extends)
-      if (itemStrategy === "extends") {
-        // Extend parent array (or set if undefined)
-        // TODO: throw if not array on LHS?
-        setParentItemAndExit([...parentItem, ...item]);
-      } else if (itemStrategy === "joins") {
-        if (
-          Array.isArray(parentItem) &&
-          parentItem.every((p) => isMap(p)) &&
-          item.every((p) => isMap(p))
-        ) {
-          for (const newMember of item) {
-            const id = item.id;
-            if (id === undefined) {
-              continue;
-            }
-            const joinMember = parentItem.find((p) => p.id === id);
-            if (joinMember === undefined) {
-              continue;
-            }
-            Object.assign(joinMember, newMember);
-          }
-        } else {
-          setParentItemAndExit(parentItem);
-        }
-      }
-      // Array? - Array (replace)
-      else {
-        setParentItemAndExit(item);
-      }
-    } else if (isMap(item)) {
-      const itemStrategy = strategyRef.get(this.path);
-
-      // Map? - Map (replace)
-      if (itemStrategy === "replaces") {
-        setParentItemAndExit(item);
-      }
-      // Map - Map (extend)
-      else if (isMap(parentItem)) {
-        // Continue recursion
-        return;
-      }
-      // Non-Map - Map (replace)
-      else {
-        setParentItemAndExit(item);
-      }
-    } else {
-      setParentItemAndExit(item);
+  function impl(parent, child, strategy, path) {
+    function throwError(message) {
+      throw new Error(`${message}: ${path.join(".")}`);
     }
-  });
-  return parent;
+
+    // parent: ??, child: sequence
+    if (Array.isArray(child)) {
+      if (strategy === "extends") {
+        // Ensure we're extending an array
+        if (!Array.isArray(parent)) {
+          throwError("Cannot extend non-array with array");
+        }
+        return [...parent, ...child];
+      } else if (strategy === "joins") {
+        // Ensure we have array of map
+        if (!child.every((p) => isMap(p) && p.id !== undefined)) {
+          throwError(
+            "Join must be performed from an array of maps containing `id`",
+          );
+        }
+        // Ensure that we have array of non-map to join onto
+        if (
+          !(
+            Array.isArray(parent) &&
+            parent.every((p) => isMap(p) && p.id !== undefined)
+          )
+        ) {
+          throwError(
+            "Join must be performed onto an array of maps containing `id`",
+          );
+        }
+        // Perform join
+        const result = [...parent];
+        for (let i = 0; i < child.length; i++) {
+          const childItem = child.at(i);
+
+          // First, are we joining or adding a new member
+          const joinIndex = parent.findIndex((p) => p.id === childItem.id);
+          if (joinIndex !== -1) {
+            // Perform join and update parent
+            result[joinIndex] = impl(
+              parent[joinIndex],
+              childItem,
+              strategy[i],
+              [...path, i],
+            );
+          } else {
+            result.push(childItem);
+          }
+        }
+        return result;
+      } else {
+        // Preserve new value
+        return child;
+      }
+    }
+    // parent: ??, child: map
+    else if (isMap(parent)) {
+      if (strategy === "replaces") {
+        return child;
+      } else {
+        const result = { ...parent };
+        for (const [key, value] of Object.entries(child)) {
+          // TODO: ensure that strategy etc exist
+          result[key] = impl(parent[key], value, strategy?.[key], [
+            ...path,
+            key,
+          ]);
+        }
+        return result;
+      }
+    }
+    // parent: ??, child: ??
+    else {
+      return child;
+    }
+  }
+  return impl(parent, child, strategy, []);
 }
+

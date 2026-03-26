@@ -11,6 +11,11 @@ parent-mapping-b:
 parent-mapping-c:
   a: 1
   b: 2
+
+parent-nested-mapping-a:
+  inner:
+    a: 1
+
 parent-list-a:
   - 1
   - 2

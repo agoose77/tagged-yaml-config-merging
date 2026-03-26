@@ -11,6 +11,12 @@ parent-mapping-b: !replaces
   f: 30
 parent-mapping-c: [10, 20, 30]
 
+parent-nested-mapping-a:
+  inner:
+    b: 20
+  child-inner:
+    a: 20
+
 parent-list-a:
   - 10
   - 20
