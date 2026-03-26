@@ -1,43 +1,9 @@
-import yaml from "js-yaml";
-import traverse from "traverse";
 import { readFileSync } from "node:fs";
-import { SCHEMA } from "./schema.mjs";
+import { parseYaml, extend } from "./config.mjs";
 
-function extendConfig(base, derived) {
-  const baseRef = traverse(base);
-  const mergedConfig = traverse(derived).map(function (item) {
-    if (item.klass === "ExtendingArray") {
-      const other = baseRef.get(this.path);
-      console.log(this.path, other);
-      return other ? item.extendFrom(other) : item;
-    }
-  });
-  return mergedConfig;
-}
-function realiseExtendedConfig(config) {
-  // After potentially more merges, realise the config
-  traverse(config).map(function (item) {
-    if (item.klass === "ExtendingArray") {
-      return item.build();
-    }
-  });
-  return config;
-}
-/////////////////
-const parseOpts = {
-  schema: SCHEMA,
-};
-
-const baseConfig = yaml.load(
-  readFileSync("base.yml", { encoding: "utf-8" }),
-  parseOpts,
-);
-const extendsConfig = yaml.load(
+const [baseConfig] = parseYaml(readFileSync("base.yml", { encoding: "utf-8" }));
+const [extendsConfig, extendsStrategy] = parseYaml(
   readFileSync("extends.yml", { encoding: "utf-8" }),
-  parseOpts,
 );
-const extendedConfig = realiseExtendedConfig(
-  extendConfig(baseConfig, extendsConfig),
-);
-
-console.dir(extendedConfig, { depth: null });
+const result = extend(baseConfig, extendsConfig, extendsStrategy);
+console.log(result);

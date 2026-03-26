@@ -1,9 +1,22 @@
-foo:
-  bar:
-    - this
-    - that
+parent-scalar-a: true
+parent-scalar-b: true
+parent-scalar-c: true
 
-hello:
-  world:
-    - yes
-    - no
+parent-mapping-a:
+  a: 1
+  b: 2
+parent-mapping-b:
+  a: 1
+  b: 2
+parent-mapping-c:
+  a: 1
+  b: 2
+parent-list-a:
+  - 1
+  - 2
+parent-list-b:
+  - 1
+  - 2
+parent-list-c:
+  - 1
+  - 2
