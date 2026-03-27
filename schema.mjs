@@ -1,10 +1,9 @@
 import yaml from "js-yaml";
 
-class ExtendingArray {
-  klass = "ExtendingArray";
-
-  constructor(data) {
+export class TaggedValue {
+  constructor(strategy, data) {
     this.data = data;
+    this.tag = strategy;
   }
 
   erase() {
@@ -20,27 +19,15 @@ const ExtendsYamlType = new yaml.Type("!extends", {
   },
 
   construct: function (data) {
-    return new ExtendingArray(data);
+    return new TaggedValue("extends", data);
   },
 
-  instanceOf: ExtendingArray,
+  instanceOf: TaggedValue,
 
   represent: function (obj) {
     return obj.erase();
   },
 });
-
-class JoiningArray {
-  klass = "JoiningArray";
-
-  constructor(data) {
-    this.data = data;
-  }
-
-  erase() {
-    return this.data;
-  }
-}
 
 const JoinsYamlType = new yaml.Type("!joins", {
   kind: "sequence",
@@ -50,27 +37,15 @@ const JoinsYamlType = new yaml.Type("!joins", {
   },
 
   construct: function (data) {
-    return new JoiningArray(data);
+    return new TaggedValue("joins", data);
   },
 
-  instanceOf: JoiningArray,
+  instanceOf: TaggedValue,
 
   represent: function (obj) {
     return obj.erase();
   },
 });
-
-class ReplacingMap {
-  klass = "ReplacingMap";
-
-  constructor(data) {
-    this.data = data;
-  }
-
-  erase() {
-    return this.data;
-  }
-}
 
 const ReplacesYamlType = new yaml.Type("!replaces", {
   kind: "mapping",
@@ -80,10 +55,10 @@ const ReplacesYamlType = new yaml.Type("!replaces", {
   },
 
   construct: function (data) {
-    return new ReplacingMap(data);
+    return new TaggedValue("replaces", data);
   },
 
-  instanceOf: ReplacingMap,
+  instanceOf: TaggedValue,
 
   represent: function (obj) {
     return obj.erase();

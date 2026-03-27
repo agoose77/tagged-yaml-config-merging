@@ -31,3 +31,12 @@ child-scalar-a: "scalar"
 parent-joinable: !joins
   - id: foo
     b: 10
+
+twice-joinable: !joins
+  - id: foo
+    A: 10
+    obj: !joins
+      - id: baz
+        C: 30
+  - id: bat
+    f: 100

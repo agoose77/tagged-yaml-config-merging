@@ -5,5 +5,6 @@ const [baseConfig] = parseYaml(readFileSync("base.yml", { encoding: "utf-8" }));
 const [extendsConfig, extendsStrategy] = parseYaml(
   readFileSync("child.yml", { encoding: "utf-8" }),
 );
+console.dir(extendsStrategy, {depth:null});
 const result = extend(baseConfig, extendsConfig, extendsStrategy);
-console.log(result);
+console.dir(result, {depth:null});

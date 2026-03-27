@@ -31,3 +31,12 @@ parent-joinable:
     a: 1
   - id: bar
     b: 2
+
+twice-joinable:
+  - id: foo
+    a: 1
+    obj:
+      - id: baz
+        c: 3
+  - id: bar
+    b: 2
