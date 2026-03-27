@@ -5,7 +5,7 @@ A simple demo of tagged config merging.
 ## Usage
 
 ```shell
-node app.mjs base.yml child.yml
+node app.mjs examples/authors/{authors,contributions}.yml
 ```
 
 ### extends
