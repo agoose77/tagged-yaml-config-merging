@@ -1,0 +1,9 @@
+version: 1
+project:
+  contributors: !joins
+    - id: choldgraf
+      roles:
+        - Conceptualization
+    - id: rowanc1
+      roles:
+        - Validation
