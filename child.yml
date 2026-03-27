@@ -1,42 +1,47 @@
 parent-scalar-b: "replaced"
 parent-scalar-c: [10, 20, 30]
 
-parent-mapping-a:
+parent-mapping-child-mapping:
   d: 10
   e: 20
   f: 30
-parent-mapping-b: !replaces
+parent-mapping-child-mapping-replaces: !replaces
   d: 10
   e: 20
   f: 30
-parent-mapping-c: [10, 20, 30]
+parent-mapping-child-sequence: [10, 20, 30]
 
-parent-nested-mapping-a:
-  inner:
-    b: 20
-  child-inner:
-    a: 20
+parent-mapping-child-mapping-nested:
+  nested:
+    a: "child"
+    c: "child"
 
-parent-list-a:
+  child-nested:
+    a: "child"
+
+parent-list-child-list:
   - 10
   - 20
-parent-list-b: !extends
+parent-list-child-list-extends: !extends
   - 10
   - 20
-parent-list-c:
+parent-list-child-mapping:
   d: 10
   e: 20
-child-scalar-a: "scalar"
 
-parent-joinable: !joins
-  - id: foo
-    b: 10
+child-scalar: "scalar"
 
-twice-joinable: !joins
+parent-list-joinable: !joins
   - id: foo
-    A: 10
+    b: "child"
+
+parent-list-joinable-recursive: !joins
+  - id: foo
+    b: "child"
+    c: "child"
     obj: !joins
       - id: baz
-        C: 30
+        b: "child"
+        c: "child"
   - id: bat
-    f: 100
+    c: "child"

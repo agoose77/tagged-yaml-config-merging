@@ -2,41 +2,44 @@ parent-scalar-a: true
 parent-scalar-b: true
 parent-scalar-c: true
 
-parent-mapping-a:
-  a: 1
-  b: 2
-parent-mapping-b:
-  a: 1
-  b: 2
-parent-mapping-c:
-  a: 1
-  b: 2
+parent-mapping-child-mapping:
+  a: "parent"
+  b: "parent"
+parent-mapping-child-mapping-replaces:
+  a: "parent"
+  b: "parent"
+parent-mapping-child-sequence:
+  a: "parent"
+  b: "parent"
 
-parent-nested-mapping-a:
-  inner:
-    a: 1
+parent-mapping-child-mapping-nested:
+  nested:
+    a: "parent"
+    b: "parent"
 
-parent-list-a:
+parent-list-child-list:
   - 1
   - 2
-parent-list-b:
+parent-list-child-list-extends:
   - 1
   - 2
-parent-list-c:
+parent-list-child-mapping:
   - 1
   - 2
 
-parent-joinable:
+parent-list-joinable:
   - id: foo
-    a: 1
+    a: "parent"
   - id: bar
-    b: 2
+    b: "parent"
 
-twice-joinable:
+parent-list-joinable-recursive:
   - id: foo
-    a: 1
+    a: "parent"
+    b: "parent"
     obj:
       - id: baz
-        c: 3
+        a: "parent"
+        b: "parent"
   - id: bar
-    b: 2
+    a: "parent"
